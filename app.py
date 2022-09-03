@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request
+import re
+from flask import Flask, render_template, request, Response
 import pandas as pd
 import requests
 
@@ -7,7 +8,7 @@ app = Flask(__name__)
 @app.route('/')
 def hello():
     return 'Hello Docker'
-    
+
 @app.route('/main', methods=['POST','GET'])
 def main():
     url = 'https://data.chhs.ca.gov/api/3/action/datastore_search?resource_id=160d4cd5-148a-408a-b093-01cacc504320&limit=8230'
@@ -27,5 +28,11 @@ def main():
     else:
         return render_template('index.html', data=data)
 
+@app.route('/health')
+def health():
+    resp = Response('ok')
+    resp.headers['Custom-Header'] = 'Incredible'
+    return resp
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port='5000')
